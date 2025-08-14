@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 flex items-center justify-center" style="min-height: 80vh;">
+    <div class="card-bg w-full max-w-md rounded-2xl shadow-2xl p-8">
+        
+        <h2 class="text-3xl font-bold text-center mb-2 gradient-text">Create Your Account</h2>
+        <p class="text-center text-gray-400 mb-8">Join the AIDHAMURA community.</p>
+
+        <form method="POST" action="{% url 'signup' %}" class="space-y-6">
+            {% csrf_token %}
+            
+            {# Manually render each form field for proper styling #}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ field.label }}</label>
+                    
+                    {# Add the correct CSS classes to the input field #}
+                    {{ field.as_widget.attrs.class|add:"w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" }}
+                    
+                    {# Display field-specific errors #}
+                    {% if field.errors %}
+                        <div class="text-red-400 text-sm mt-2">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {# Display help text if it exists #}
+                    {% if field.help_text %}
+                        <p class="text-xs text-gray-500 mt-2">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition-colors duration-300 !mt-8">
+                Sign Up
+            </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-400 mt-8">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="font-medium text-indigo-400 hover:text-indigo-300">Login</a>
+        </p>
+    </div>
+</main>
+{% endblock %}

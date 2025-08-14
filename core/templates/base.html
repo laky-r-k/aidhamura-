@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDHAMURA - {% block title %}Pioneering Future Tech{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5, #c026d3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-bg {
+            background-color: rgba(23, 23, 23, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-effect {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, rgba(10, 10, 10, 0) 60%);
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="relative overflow-x-hidden">
+
+    <div class="glow-effect"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'landing_page' %}" class="text-2xl font-bold tracking-tighter">
+                    <span class="gradient-text">AIDHAMURA</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="{% url 'landing_page' %}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
+                    <a href="{% url 'landing_page' %}#services" class="text-gray-300 hover:text-white transition-colors">Services</a>
+                    <a href="{% url 'landing_page' %}#news" class="text-gray-300 hover:text-white transition-colors">News</a>
+                    <a href=# class="text-gray-300 hover:text-white transition-colors">Chat</a>
+                    <div class="flex items-center space-x-4">
+                        {% if user.is_authenticated %}
+                            <span class="text-sm text-gray-300">Welcome, {{ user.username }}</span>
+                            <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Logout
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Login
+                            </a>
+                        {% endif %}
+                    </div>
+                </nav>
+                <button class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page specific content will be injected here -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-400">
+            <p>&copy; {% now "Y" %} AIDHAMURA. All Rights Reserved.</p>
+            <p class="text-sm mt-2">Built with passion by the AIDHAMURA team.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
