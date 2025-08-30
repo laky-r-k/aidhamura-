@@ -9,5 +9,5 @@ urlpatterns = [
     path('<str:username>/', views.chat_view, name='chat'),
     
     # Add this new URL to handle sending a message
-    path('<str:username>/send/', views.send_message, name='send_message'),
+    
 ]

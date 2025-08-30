@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'core',
     'accounts',
     'chats',
+    
     
 ]
 
@@ -71,7 +73,7 @@ TEMPLATES = [
         },
     },
 ]
-
+ASGI_APPLICATION = 'aidhamura.asgi.application'
 WSGI_APPLICATION = 'aidhamura.wsgi.application'
 
 
@@ -133,3 +135,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # settings.py
 
 # Add your computer's local IP address here
+
+# settings.py
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
