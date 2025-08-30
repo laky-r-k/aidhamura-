@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 pb-12">
+    <div class="card-bg w-full max-w-3xl mx-auto rounded-2xl shadow-2xl p-8">
+        
+        <!-- Profile Header -->
+        <div class="flex flex-col md:flex-row items-center text-center md:text-left md:space-x-8">
+            <!-- Profile Picture -->
+            <div class="flex-shrink-0 mb-6 md:mb-0">
+                <img src="{{ profile_user.profile.profile_picture.url }}" alt="{{ profile_user.username }}'s profile picture" class="w-40 h-40 rounded-full border-4 border-indigo-500 object-cover shadow-lg">
+            </div>
+
+            <!-- Profile Info -->
+            <div class="flex-grow">
+                <h2 class="text-4xl font-bold gradient-text">{{ profile_user.username }}</h2>
+                <p class="text-lg text-gray-400 mt-1">{{ profile_user.email }}</p>
+                {% if profile_user.profile.location %}
+                    <p class="text-md text-gray-500 mt-1">{{ profile_user.profile.location }}</p>
+                {% endif %}
+                {% if profile_user.profile.bio %}
+                    <p class="text-gray-300 mt-4 max-w-lg">{{ profile_user.profile.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Stats and Actions -->
+        <div class="mt-8 border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <!-- Stats Bar -->
+            <div class="flex space-x-6 text-gray-400">
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-white">{{ profile_user.profile.friends.count }}</p>
+                    <p class="text-sm">Friends</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-white">{{ profile_user.date_joined|date:"M Y" }}</p>
+                    <p class="text-sm">Joined</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            {% if user.is_authenticated and user != profile_user %}
+                <div class="flex space-x-4">
+                    <a href="{% url 'chat' profile_user.username %}" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                        Message
+                    </a>
+                    {% if profile_user.profile in user.profile.friends.all %}
+                        <a href="{% url 'remove_friend' profile_user.username %}" class="bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                            Remove Friend
+                        </a>
+                    {% else %}
+                        <a href="{% url 'add_friend' profile_user.username %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                            Add Friend
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Edit Profile Button -->
+            {% if user == profile_user %}
+                <div class="flex space-x-4">
+                    <a href="{% url 'edit_profile' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                        Edit Profile
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Friend List -->
+        <div class="mt-8 border-t border-white/10 pt-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Friends</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                {% for friend_profile in profile_user.profile.friends.all %}
+                    <a href="{% url 'profile' friend_profile.user.username %}" class="text-center group transition-transform transform hover:-translate-y-1">
+                        <img src="{{ friend_profile.profile_picture.url }}" alt="{{ friend_profile.user.username }}" class="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-gray-700 group-hover:border-indigo-500 transition-colors">
+                        <p class="font-medium text-gray-300 text-sm truncate group-hover:text-white">{{ friend_profile.user.username }}</p>
+                    </a>
+                {% empty %}
+                    <p class="text-gray-400 col-span-full text-center py-4">No friends yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

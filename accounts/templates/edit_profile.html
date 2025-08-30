@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 pb-12">
+    <div class="card-bg w-full max-w-2xl mx-auto rounded-2xl shadow-2xl p-8">
+        <h2 class="text-3xl font-bold text-center mb-8 gradient-text">Edit Your Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Bio Field -->
+            <div>
+                <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.bio.label }}</label>
+                <textarea name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" rows="4" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Tell us a little about yourself...">{{ form.bio.value|default_if_none:'' }}</textarea>
+                {% if form.bio.errors %}
+                    <div class="text-red-400 text-sm mt-2">{% for error in form.bio.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                {% endif %}
+            </div>
+
+            <!-- Location Field -->
+            <div>
+                <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.location.label }}</label>
+                <input type="text" name="{{ form.location.name }}" id="{{ form.location.id_for_label }}" value="{{ form.location.value|default_if_none:'' }}" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="e.g., San Francisco, CA">
+                {% if form.location.errors %}
+                    <div class="text-red-400 text-sm mt-2">{% for error in form.location.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                {% endif %}
+            </div>
+
+            <!-- Profile Picture Field -->
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">{{ form.profile_picture.label }}</label>
+                <div class="flex items-center space-x-4">
+                    <img id="profile-pic-preview" src="{{ user.profile.profile_picture.url }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700">
+                    <label for="{{ form.profile_picture.id_for_label }}" class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        <span>Change Picture</span>
+                        <input type="file" name="{{ form.profile_picture.name }}" id="{{ form.profile_picture.id_for_label }}" class="hidden" accept="image/*">
+                    </label>
+
+                    <!-- Remove Picture Button -->
+                    {% if user.profile.profile_picture and user.profile.profile_picture.url != user.profile.profile_picture.field.default.url %}
+                        <div id="remove-pic-container" class="flex items-center">
+                            <input type="checkbox" name="{{ form.profile_picture.html_name }}-clear" id="profile_picture-clear" class="hidden">
+                            <label for="profile_picture-clear" id="remove-pic-btn" class="cursor-pointer bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Remove
+                            </label>
+                        </div>
+                    {% endif %}
+                </div>
+                 {% if form.profile_picture.errors %}
+                    <div class="text-red-400 text-sm mt-2">{% for error in form.profile_picture.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                {% endif %}
+            </div>
+
+
+            <div class="pt-6 flex justify-end space-x-4 border-t border-white/10">
+                <a href="{% url 'profile' user.username %}" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    const removeBtn = document.getElementById('remove-pic-btn');
+    const profilePicPreview = document.getElementById('profile-pic-preview');
+    const removeContainer = document.getElementById('remove-pic-container');
+    const clearCheckbox = document.getElementById('profile_picture-clear');
+    const fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+
+    // Logic for the "Remove" button
+    if (removeBtn && profilePicPreview && clearCheckbox) {
+        removeBtn.addEventListener('click', function() {
+            clearCheckbox.checked = true;
+            profilePicPreview.style.display = 'none';
+            if(removeContainer) removeContainer.style.display = 'none';
+        });
+    }
+
+    // Logic for the "Change Picture" button to show a preview
+    if (fileInput && profilePicPreview) {
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Update the image source to show the preview
+                    profilePicPreview.src = e.target.result;
+                    // Make sure the image is visible
+                    profilePicPreview.style.display = 'block';
+                    // Uncheck the clear box in case it was checked
+                    if(clearCheckbox) clearCheckbox.checked = false;
+                    // Show the remove button again if it was hidden
+                    if(removeContainer) removeContainer.style.display = 'flex';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -12,29 +12,58 @@
         <form method="POST" action="{% url 'signup' %}" class="space-y-6">
             {% csrf_token %}
             
-            {# Manually render each form field for proper styling #}
-            {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ field.label }}</label>
-                    
-                    {# Add the correct CSS classes to the input field #}
-                    {{ field.as_widget.attrs.class|add:"w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" }}
-                    
-                    {# Display field-specific errors #}
-                    {% if field.errors %}
-                        <div class="text-red-400 text-sm mt-2">
-                            {% for error in field.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    {# Display help text if it exists #}
-                    {% if field.help_text %}
-                        <p class="text-xs text-gray-500 mt-2">{{ field.help_text|safe }}</p>
-                    {% endif %}
+            <!-- Render Non-Field Errors -->
+            {% if form.non_field_errors %}
+                <div class="text-red-400 text-sm">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            {% endif %}
+
+            <!-- Username Field -->
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.username.label }}</label>
+                <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Create a username">
+                {% if form.username.errors %}
+                    <div class="text-red-400 text-sm mt-2">
+                        {% for error in form.username.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Email Field -->
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.email.label }}</label>
+                <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Enter your email">
+                {% if form.email.errors %}
+                    <div class="text-red-400 text-sm mt-2">
+                        {% for error in form.email.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Password 1 Field -->
+            <div>
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.password1.label }}</label>
+                <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Enter a secure password">
+                {% if form.password1.errors %}
+                    <div class="text-red-400 text-sm mt-2">
+                        {% for error in form.password1.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Password 2 Field -->
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">{{ form.password2.label }}</label>
+                <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" class="w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Confirm your password">
+                {% if form.password2.errors %}
+                    <div class="text-red-400 text-sm mt-2">
+                        {% for error in form.password2.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
 
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition-colors duration-300 !mt-8">
                 Sign Up

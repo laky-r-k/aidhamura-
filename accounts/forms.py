@@ -1,20 +1,24 @@
-from django import forms
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django import forms
+from .models import Profile
 
 class SignUpForm(UserCreationForm):
-    def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
-        
-        # Define the common CSS class for all fields
-        common_classes = "w-full bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-
-        # Add the CSS classes to the widgets of each field
-        self.fields['username'].widget.attrs.update({'class': common_classes, 'placeholder': 'Create a username'})
-        self.fields['email'].widget.attrs.update({'class': common_classes, 'placeholder': 'Enter your email'})
-        self.fields['password'].widget.attrs.update({'class': common_classes, 'placeholder': 'Enter a secure password'})
-        self.fields['password2'].widget.attrs.update({'class': common_classes, 'placeholder': 'Confirm your password'})
+    # This correctly makes the email field required on the form
+    email = forms.EmailField(max_length=254, help_text='Required. Enter a valid email address.')
 
     class Meta:
         model = User
+        # Only include fields that are part of the User model itself
         fields = ('username', 'email')
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        # List the fields from your Profile model that you want to be editable
+        fields = ['bio', 'location', 'profile_picture']
+        widgets = {
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'hidden'}),
+        }
+    
