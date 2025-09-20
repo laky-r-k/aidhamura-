@@ -65,14 +65,13 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-                <!-- This form is now controlled by JavaScript -->
                 <form id="chat-form" class="p-4 border-t border-white/10 flex space-x-4">
                     <input id="chat-message-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <button id="chat-message-submit" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg">Send</button>
                 </form>
 
             {% else %}
-                <!-- Placeholder -->
+                <!-- Placeholder when no chat is active -->
                 <div class="flex-1 flex items-center justify-center flex-col p-8">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -109,88 +108,112 @@
     </div>
 </div>
 
-<!-- Add the WebSocket script only if a chat is active -->
+
+<!-- =================== JAVASCRIPT SECTION =================== -->
+
+<!-- SCRIPT 1: Modal Logic (Always runs) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const newChatModal = document.getElementById('new-chat-modal');
+        
+        if (newChatBtn && newChatModal && closeModalBtn) {
+            newChatBtn.addEventListener('click', () => {
+                newChatModal.classList.remove('hidden');
+                newChatModal.classList.add('flex');
+            });
+
+            const closeModal = () => {
+                newChatModal.classList.add('hidden');
+                newChatModal.classList.remove('flex');
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            // Close modal if user clicks on the background overlay
+            newChatModal.addEventListener('click', (event) => {
+                if (event.target === newChatModal) {
+                    closeModal();
+                }
+            });
+        }
+    });
+</script>
+
+<!-- SCRIPT 2: WebSocket Logic (Only runs if a chat is active) -->
 {% if other_user %}
     <!-- These are used to pass Django variables to our script -->
     {{ other_user.username|json_script:"other-user-username" }}
     {{ request.user.username|json_script:"current-user-username" }}
 
     <script>
-        // Get the usernames from the template
-        const otherUserUsername = JSON.parse(document.getElementById('other-user-username').textContent);
-        const currentUserUsername = JSON.parse(document.getElementById('current-user-username').textContent);
-        
-        // Get the HTML elements we need to interact with
-        const chatLog = document.getElementById('chat-log');
-        const chatInput = document.getElementById('chat-message-input');
-        const chatForm = document.getElementById('chat-form');
-
-        // Scroll the chat log to the bottom on page load
-        if (chatLog) {
-            chatLog.scrollTop = chatLog.scrollHeight;
-        }
-        if (chatInput) {
-            chatInput.focus();
-        }
-
-        // --- WebSocket Connection ---
-        const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/' + otherUserUsername + '/'
-        );
-
-        // This function runs every time a new message is received from the server
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            const messageElement = document.createElement('div');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the usernames from the template
+            const otherUserUsername = JSON.parse(document.getElementById('other-user-username').textContent);
+            const currentUserUsername = JSON.parse(document.getElementById('current-user-username').textContent);
             
-            // Check if the message was sent by the current user or the other user
-            if (data.username === currentUserUsername) {
-                messageElement.className = 'text-right';
-                messageElement.innerHTML = `<div class="inline-block bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words text-left">${data.message}</div>`;
-            } else {
-                messageElement.className = 'text-left';
-                messageElement.innerHTML = `<div class="inline-block bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
+            // Get the HTML elements we need to interact with
+            const chatLog = document.getElementById('chat-log');
+            const chatInput = document.getElementById('chat-message-input');
+            const chatForm = document.getElementById('chat-form');
+
+            // Scroll the chat log to the bottom on page load
+            if (chatLog) {
+                chatLog.scrollTop = chatLog.scrollHeight;
             }
-            
-            // Add the new message to the chat log and scroll down
-            chatLog.appendChild(messageElement);
-            chatLog.scrollTop = chatLog.scrollHeight;
-        };
+            if (chatInput) {
+                chatInput.focus();
+            }
 
-        // Handle socket closing
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
+            // --- WebSocket Connection ---
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const chatSocket = new WebSocket(
+                protocol + '//' + window.location.host + '/ws/chat/' + otherUserUsername + '/'
+            );
 
-        // Handle form submission
-        chatForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent the page from reloading
-            const message = chatInput.value;
-            if (message.trim() === '') return; // Don't send empty messages
+            // This function runs every time a new message is received from the server
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                const messageElement = document.createElement('div');
+                
+                // Check if the message was sent by the current user or the other user
+                if (data.username === currentUserUsername) {
+                    messageElement.className = 'text-right';
+                    messageElement.innerHTML = `<div class="inline-block bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words text-left">${data.message}</div>`;
+                } else {
+                    messageElement.className = 'text-left';
+                    messageElement.innerHTML = `<div class="inline-block bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
+                }
+                
+                // Add the new message to the chat log and scroll down
+                if (chatLog) {
+                    chatLog.appendChild(messageElement);
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                }
+            };
 
-            // Send the message to the WebSocket server
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            
-            chatInput.value = ''; // Clear the input field
-        });
+            // Handle socket closing
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
 
-        // --- Modal Scripts ---
-        const newChatBtn = document.getElementById('new-chat-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const newChatModal = document.getElementById('new-chat-modal');
-        
-        newChatBtn.addEventListener('click', () => {
-            newChatModal.classList.remove('hidden');
-            newChatModal.classList.add('flex');
-        });
+            // Handle form submission
+            if (chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent the page from reloading
+                    const message = chatInput.value;
+                    if (message.trim() === '') return; // Don't send empty messages
 
-        closeModalBtn.addEventListener('click', () => {
-            newChatModal.classList.add('hidden');
-            newChatModal.classList.remove('flex');
+                    // Send the message to the WebSocket server
+                    chatSocket.send(JSON.stringify({
+                        'message': message
+                    }));
+                    
+                    chatInput.value = ''; // Clear the input field
+                });
+            }
         });
     </script>
 {% endif %}
 {% endblock %}
-
