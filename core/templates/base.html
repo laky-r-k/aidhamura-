@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIDHAMURA - {% block title %}Pioneering Future Tech{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for dropdown interactivity -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -54,17 +56,42 @@
                     <a href="{% url 'landing_page' %}#services" class="text-gray-300 hover:text-white transition-colors">Services</a>
                     <a href="{% url 'landing_page' %}#news" class="text-gray-300 hover:text-white transition-colors">News</a>
                     <a href="{% url 'inbox' %}" class="text-gray-300 hover:text-white transition-colors">Chat</a>
+                    
+                    <!-- Global User Search Form -->
+                    <form method="GET" action="{% url 'search_results' %}" class="relative">
+                        <input type="text" name="q" class="bg-gray-900/50 border border-white/10 rounded-full pl-10 pr-4 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Find users...">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </form>
+
+                    <!-- Authentication Section -->
                     <div class="flex items-center space-x-4">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'profile' user.username %}" class="text-sm text-gray-300 hover:text-white transition-colors">
-                                {{ user.username }}
-                            </a>
-                            <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                                Logout
-                            </a>
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="flex items-center space-x-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                                    <span>{{ user.username }}</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 card-bg rounded-lg shadow-lg py-1" style="display: none;">
+                                    <a href="{% url 'profile' user.username %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">My Profile</a>
+                                    <a href="{% url 'edit_profile' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Edit Profile</a>
+                                    
+                                    <!-- IMPROVED: Conditional Password Link -->
+                                    {% if user.has_usable_password %}
+                                        <a href="{% url 'account_change_password' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Change Password</a>
+                                    {% else %}
+                                        <a href="{% url 'account_set_password' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Set Password</a>
+                                    {% endif %}
+
+                                    <div class="border-t border-white/10 my-1"></div>
+                                    <a href="{% url 'account_logout' %}" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700/50">Logout</a>
+                                </div>
+                            </div>
                         {% else %}
-                            <a href="{% url 'login' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                                Login
+                            <a href="{% url 'account_login' %}" class="text-gray-300 hover:text-white transition-colors">Login</a>
+                            <a href="{% url 'account_signup' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Sign Up
                             </a>
                         {% endif %}
                     </div>
@@ -77,7 +104,10 @@
     </header>
 
     <!-- Page specific content will be injected here -->
-    {% block content %}{% endblock %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
 
     <!-- Footer -->
     <footer class="border-t border-white/10 mt-20">
@@ -89,3 +119,4 @@
 
 </body>
 </html>
+

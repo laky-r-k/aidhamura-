@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 flex items-center justify-center" style="min-height: 80vh;">
+    <div class="card-bg w-full max-w-md rounded-2xl shadow-2xl p-8 text-center">
+
+        <h2 class="text-3xl font-bold mb-4 gradient-text">{% trans "Verify Your E-mail Address" %}</h2>
+
+        <p class="text-gray-300 leading-relaxed">
+            {% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification e-mail in your main inbox, check your spam folder.{% endblocktrans %}
+        </p>
+        <p class="text-gray-400 mt-6 text-sm">
+            {% blocktrans %}Please contact us if you do not receive it within a few minutes.{% endblocktrans %}
+        </p>
+
+    </div>
+</main>
+{% endblock %}

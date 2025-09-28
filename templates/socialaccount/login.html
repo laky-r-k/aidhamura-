@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Social Network Sign In" %}{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 flex items-center justify-center" style="min-height: 80vh;">
+    <div class="card-bg w-full max-w-md rounded-2xl shadow-2xl p-8 text-center">
+        
+        {% if process == "connect" %}
+            <!-- This part is shown if a user is already logged in and is connecting a social account -->
+            <h2 class="text-3xl font-bold mb-4 gradient-text">{% blocktrans with provider.name as name %}Connect {{ name }}{% endblocktrans %}</h2>
+            <p class="text-gray-300 mb-6">
+                {% blocktrans with provider.name as name %}You are about to connect a new third-party account from {{ name }}.{% endblocktrans %}
+            </p>
+        {% else %}
+            <!-- This is the part you will see for a normal login -->
+            <h2 class="text-3xl font-bold mb-4 gradient-text">{% blocktrans with provider.name as name %}Sign In Via {{ name }}{% endblocktrans %}</h2>
+            <p class="text-gray-300 mb-6">
+                {% blocktrans with provider.name as name %}You are about to be redirected to {{ name }} to sign in with your account.{% endblocktrans %}
+            </p>
+        {% endif %}
+
+        <!-- This form's "Continue" button is what sends the user to Google -->
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition-colors duration-300">
+                {% trans "Continue" %}
+            </button>
+        </form>
+        
+    </div>
+</main>
+{% endblock %}
+

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 pb-12">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">
+            Search Results
+        </h1>
+        <p class="text-lg text-gray-400 mb-8">
+            {% if query %}
+                Showing results for: <span class="font-semibold text-indigo-400">"{{ query }}"</span>
+            {% else %}
+                Please enter a search term to find users.
+            {% endif %}
+        </p>
+
+        {% if results %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {% for user in results %}
+                    <a href="{% url 'profile' user.username %}" class="card-bg p-6 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center">
+                        <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-indigo-500">
+                        <h3 class="font-bold text-lg text-white">{{ user.username }}</h3>
+                        <p class="text-sm text-gray-400">{{ user.first_name }} {{ user.last_name }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div class="card-bg p-8 rounded-xl text-center">
+                <h3 class="font-semibold text-xl text-white">No Users Found</h3>
+                <p class="text-gray-400 mt-2">We couldn't find any users matching your search. Please try a different name.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

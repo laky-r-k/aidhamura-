@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect ,HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages # Import messages to show feedback
-from .forms import SignUpForm ,ProfileUpdateForm# Import your new form
+from .forms import SignUpForm ,UserEditForm, ProfileEditForm # Import your new form
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
+from django.db.models import Q 
 def login_view(request):
     # Handle GET request: Show the login page
     if request.method == 'GET':
@@ -99,19 +100,63 @@ def add_friend(request, username):
     
     return redirect('profile', username=username)
 
-login_required
+@login_required
 def edit_profile(request):
     if request.method == 'POST':
-        # The form is pre-filled with the user's current profile data
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
+        # Instantiate both forms with the submitted data.
+        # user_form handles username, email, etc.
+        user_form = UserEditForm(request.POST, instance=request.user)
+        # profile_form handles bio, picture, etc.
+        # request.FILES is essential for the image upload to work.
+        profile_form = ProfileEditForm(request.POST, request.FILES, instance=request.user.profile)
+
+        # The view now checks if both forms are valid before saving.
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             messages.success(request, 'Your profile has been updated successfully!')
+            # We redirect to the profile page using the potentially new username.
             return redirect('profile', username=request.user.username)
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = ProfileUpdateForm(instance=request.user.profile)
+        # For a GET request, we create both forms pre-filled with the user's current data.
+        user_form = UserEditForm(instance=request.user)
+        profile_form = ProfileEditForm(instance=request.user.profile)
+
+    # We pass both forms to the template so they can be displayed.
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+    # Ensure this renders the template that is designed to show both forms.
+    return render(request, 'edit_profile.html', context)
+
+
+
+def search_results_view(request):
+    """
+    Handles the user search functionality.
+    """
+    # Get the search term from the URL's query parameters (e.g., /search/?q=laky)
+    query = request.GET.get('q')
+    
+    if query:
+        # If a query was provided, filter the User model.
+        # This looks for the query in the username, first_name, OR last_name fields.
+        # The 'icontains' makes the search case-insensitive.
+        results = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        )
+    else:
+        # If no query is provided, return an empty list of results.
+        results = User.objects.none()
 
     context = {
-        'form': form
+        'query': query,
+        'results': results,
     }
-    return render(request, 'edit_profile.html', context)
+    # Render the page that will display the results.
+    return render(request, 'results.html', context)

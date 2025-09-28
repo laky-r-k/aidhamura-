@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login Cancelled" %}{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 pt-32 flex items-center justify-center" style="min-height: 80vh;">
+    <div class="card-bg w-full max-w-md rounded-2xl shadow-2xl p-8 text-center">
+        
+        <h2 class="text-3xl font-bold mb-4 gradient-text">{% trans "Login Cancelled" %}</h2>
+        
+        <p class="text-gray-300 mb-6">
+            {% trans "You have cancelled the sign-in process." %}
+        </p>
+
+        <a href="{% url 'account_login' %}" class="w-full inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition-colors duration-300">
+            {% trans "Return to Login" %}
+        </a>
+        
+    </div>
+</main>
+{% endblock %}
