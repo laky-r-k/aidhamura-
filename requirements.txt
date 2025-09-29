@@ -21,7 +21,7 @@ whitenoise==6.11.0
 django-allauth==65.11.2
 PyJWT==2.10.1
 
-Image Handling
+#Image Handling
 Pillow==11.3.0
 
 #Other dependencies that are good to specify
