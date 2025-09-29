@@ -129,9 +129,9 @@ EMAIL_HOST_USER = 'apikey'  # This is always 'apikey' for SendGrid
 # This securely loads your API key from the environment
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
 # This is the email that will show up as the sender
-DEFAULT_FROM_EMAIL = 'your-verified-email@example.com' # Use an email you can verify in SendGrid
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL') # Use an email you can verify in SendGrid
 
-ACCOUNT_LOGIN_METHODS = ['username', 'email']
+ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username', 'password1*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
