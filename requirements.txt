@@ -20,12 +20,15 @@ whitenoise==6.11.0
 #Authentication
 django-allauth==65.11.2
 PyJWT==2.10.1
+oauthlib==3.2.2  
+requests==2.32.5 
 
 #Image Handling
 Pillow==11.3.0
 
 #Other dependencies that are good to specify
 sqlparse==0.5.3
+
 
 
 
