@@ -1,0 +1,31 @@
+#Django Core
+Django==5.2.6
+asgiref==3.9.1
+
+#ASGI & Channels (for real-time chat)
+channels==4.3.1
+daphne==4.2.1
+
+#Production Server Stack
+gunicorn==23.0.0
+uvicorn==0.37.0
+
+#Database (for PostgreSQL)
+dj-database-url==3.0.1
+psycopg2-binary==2.9.10
+
+Static Files
+whitenoise==6.11.0
+
+#Authentication
+django-allauth==65.11.2
+PyJWT==2.10.1
+
+Image Handling
+Pillow==11.3.0
+
+#Other dependencies that are good to specify
+sqlparse==0.5.3
+
+
+
