@@ -1,26 +1,23 @@
-"""
-Django settings for aidhamura project.
-"""
-
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# --- SECURITY & CORE CONFIGURATION ---
 
-# SECURITY WARNING: keep the secret key used in in production secret!
-SECRET_KEY = 'django-insecure-f3bnw(f_@qt-376i&gs(na5r#d*v7fh04k%8qar@l+j3tx$faz'
+# This securely loads the secret key from an environment variable.
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# This reads the DEBUG value from the environment. It will be 'False' on Render.
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+# This reads the allowed hosts from the environment.
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
 
-# Application definition
+# --- APPLICATION DEFINITION ---
 
 INSTALLED_APPS = [
     'daphne',
@@ -31,13 +28,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
     'core',
     'accounts',
     'chats',
@@ -45,7 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # Added WhiteNoise middleware for production static files - safe for development
+    # WhiteNoise is for serving static files in production.
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -73,20 +68,23 @@ TEMPLATES = [
         },
     },
 ]
+
 ASGI_APPLICATION = 'aidhamura.asgi.application'
 WSGI_APPLICATION = 'aidhamura.wsgi.application'
 
 
-# Database
+# --- DATABASE CONFIGURATION ---
+# This will use the DATABASE_URL from Render, but fall back to your local
+# sqlite file if it's not found (i.e., when you're working locally).
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        conn_max_age=600
+    )
 }
 
 
-# Password validation
+# --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -95,58 +93,44 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# --- INTERNATIONALIZATION ---
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# --- STATIC & MEDIA FILES ---
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Channels Configuration
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
-
-# --- ALLAUTH CONFIGURATION (CLEANED UP & CORRECTED) ---
-
-# This is required for allauth to work
+# --- CHANNELS & ALLAUTH CONFIGURATION ---
+CHANNEL_LAYERS = {'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'}}
 SITE_ID = 1
-
-# Authentication Backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
-# Redirects
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
-# Email settings for development (prints emails to the console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Modern Allauth Settings (this block replaces all old/deprecated settings)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ACCOUNT_LOGIN_METHODS = ['username', 'email']
-# Corrected 'password*' to 'password1*' as per the error message
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username', 'password1*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_LOGIN_ON_GET = True
-
-# Custom Forms (if you use them)
-ACCOUNT_FORMS = {
-    'login': 'accounts.forms.CustomLoginForm',
-}
+ACCOUNT_FORMS = {'login': 'accounts.forms.CustomLoginForm'}
 
