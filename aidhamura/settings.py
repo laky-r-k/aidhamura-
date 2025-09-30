@@ -76,13 +76,22 @@ WSGI_APPLICATION = 'aidhamura.wsgi.application'
 # --- DATABASE CONFIGURATION ---
 # This will use the DATABASE_URL from Render, but fall back to your local
 # sqlite file if it's not found (i.e., when you're working locally).
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
-        conn_max_age=600
-    )
-}
-
+if os.environ.get('DATABASE_URL'):
+    # If a DATABASE_URL is set (like on Render), use it.
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            ssl_require=True  # Recommended for Render connections
+        )
+    }
+else:
+    # Otherwise (like for local development), fall back to SQLite.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
