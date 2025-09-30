@@ -28,6 +28,7 @@ Pillow==11.3.0
 #Other dependencies that are good to specify
 sqlparse==0.5.3
 
-
+cloudinary==1.40.0
+django-cloudinary-storage==0.3.0
 
 
