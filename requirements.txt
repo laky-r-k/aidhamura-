@@ -8,8 +8,7 @@ daphne==4.2.1
 
 #Production Server Stack
 gunicorn==23.0.0
-uvicorn==0.37.0
-
+uvicorn[standard]==0.37.0
 #Database (for PostgreSQL)
 dj-database-url==3.0.1
 psycopg2-binary==2.9.10
