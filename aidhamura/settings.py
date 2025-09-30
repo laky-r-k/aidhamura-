@@ -2,6 +2,8 @@ from pathlib import Path
 import os
 import dj_database_url
 import cloudinary_storage
+ 
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -130,7 +132,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 if os.environ.get('CLOUDINARY_URL'):
     print("Using Cloudinary for media storage")
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    CLOUDINARY_STORAGE = {
+    cloudinary_storage = {
         'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
     }
 else:
