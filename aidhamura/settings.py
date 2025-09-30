@@ -128,7 +128,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 if os.environ.get('CLOUDINARY_URL'):
     print("Using Cloudinary for media storage")
-    DEFAULT_FILE_STORAGE = cloudinary_storage.storage.MediaCloudinaryStorage
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     CLOUDINARY_STORAGE = {
         'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
     }
