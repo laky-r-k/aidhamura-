@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url
-import cloudinary_storage
+
  
 
 
@@ -32,9 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
-    'cloudinary',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -129,15 +129,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }"""
 
+MEDIA_URL = '/media/'
 if os.environ.get('CLOUDINARY_URL'):
     print("Using Cloudinary for media storage")
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    cloudinary_storage = {
+    CLOUDINARY_STORAGE = {
         'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
     }
 else:
     print("Using local storage for media files")
-    MEDIA_URL = '/media/'
+    
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
