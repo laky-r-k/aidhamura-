@@ -7,17 +7,17 @@
     <!-- Hero Section -->
     <section id="home" class="text-center py-20 md:py-32">
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-6 leading-tight">
-            We Build the <span class="gradient-text">Future of Technology</span>
+            Architecting the <span class="gradient-text">Digital Frontier</span>
         </h1>
         <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 mb-8">
-            AIDHAMURA is a collective of passionate developers, programmers, and tech enthusiasts dedicated to pushing the boundaries of innovation and sharing the most exciting news in the tech world.
+            AIDHAMURA is a forward-thinking collective where developers, innovators, and visionaries collaborate to build next-generation technology and define the future of the web.
         </p>
         <div class="flex justify-center space-x-4">
-            <a href="#services" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105">
-                What We Do
+            <a href="#focus" class="bg-amber-500 hover:bg-amber-400 text-black font-semibold py-3 px-8 rounded-lg transition-transform transform hover:scale-105">
+                Our Focus
             </a>
-            <a href="#news" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105">
-                Latest News
+            <a href="{% url 'inbox' %}" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105">
+                Join the Chat
             </a>
         </div>
     </section>
@@ -25,46 +25,52 @@
     <!-- About Section -->
     <section id="about" class="py-20">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold">Who We Are</h2>
-            <p class="text-gray-400 mt-2">A glimpse into our mission and values.</p>
+            <h2 class="text-3xl md:text-4xl font-bold">Our Manifesto</h2>
+            <p class="text-gray-400 mt-2">Driven by curiosity, united by code.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-12 items-center">
             <div>
-                <img src="https://placehold.co/600x400/0a0a0a/4f46e5?text=AIDHAMURA+Team" alt="AIDHAMURA Team" class="rounded-xl shadow-2xl w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/171717/e5e5e5?text=Image+Not+Found';">
+                <img src="https://placehold.co/600x400/0a0a0a/8b5cf6?text=Innovate" alt="Innovation at AIDHAMURA" class="rounded-xl shadow-2xl w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/171717/e5e5e5?text=Image+Not+Found';">
             </div>
             <div class="space-y-6">
-                <h3 class="text-2xl font-semibold gradient-text">A Collective of Innovators</h3>
+                <h3 class="text-2xl font-semibold gradient-text">A Synthesis of Minds</h3>
                 <p class="text-gray-300">
-                    At AIDHAMURA, we are more than just a group; we are a community. We believe in the power of collaboration to solve complex problems and create technologies that matter. Our members come from diverse backgrounds, bringing unique skills in AI, blockchain, web development, and more.
+                    AIDHAMURA is not a company; it's a convergence point for talent. We believe that groundbreaking innovation emerges from the intersection of diverse perspectives. Our members are experts in AI, decentralized systems, and immersive web experiences, united by a single goal: to build technology that is not just powerful, but purposeful.
                 </p>
                 <p class="text-gray-300">
-                    Our core mission is to explore emerging technologies, build exciting projects, and foster a culture of continuous learning and knowledge sharing.
+                    We operate on principles of open collaboration, continuous learning, and a relentless pursuit of what's next.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-20">
+    <!-- Focus Areas Section -->
+    <section id="focus" class="py-20">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold">What We Build</h2>
-            <p class="text-gray-400 mt-2">Our expertise spans across the modern tech stack.</p>
+            <h2 class="text-3xl md:text-4xl font-bold">Our Focus Areas</h2>
+            <p class="text-gray-400 mt-2">Where we channel our expertise.</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="card-bg p-8 rounded-xl hover:-translate-y-2 transition-transform duration-300">
-                <div class="w-12 h-12 bg-indigo-900/50 text-indigo-400 rounded-lg flex items-center justify-center mb-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div>
-                <h3 class="text-xl font-bold mb-2">Web & App Development</h3>
-                <p class="text-gray-400">Crafting beautiful, responsive, and high-performance websites and mobile applications that provide seamless user experiences.</p>
+                <div class="w-12 h-12 bg-violet-900/50 text-violet-400 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Decentralized Systems</h3>
+                <p class="text-gray-400">Engineering robust blockchain solutions and decentralized applications that empower users with greater control and transparency.</p>
             </div>
             <div class="card-bg p-8 rounded-xl hover:-translate-y-2 transition-transform duration-300">
-                <div class="w-12 h-12 bg-purple-900/50 text-purple-400 rounded-lg flex items-center justify-center mb-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636L3.515 3.515m16.97 16.97l-2.121-2.121M18.364 5.636L16.243 3.515m-12.728 12.728l-2.121 2.121"></path></svg></div>
-                <h3 class="text-xl font-bold mb-2">Artificial Intelligence</h3>
-                <p class="text-gray-400">Developing intelligent systems, machine learning models, and data-driven solutions to automate processes and uncover insights.</p>
+                <div class="w-12 h-12 bg-amber-900/50 text-amber-400 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Cognitive AI</h3>
+                <p class="text-gray-400">Moving beyond basic machine learning to build intelligent, context-aware AI that can reason, learn, and interact in more human-like ways.</p>
             </div>
             <div class="card-bg p-8 rounded-xl hover:-translate-y-2 transition-transform duration-300">
-                <div class="w-12 h-12 bg-pink-900/50 text-pink-400 rounded-lg flex items-center justify-center mb-4"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
-                <h3 class="text-xl font-bold mb-2">Tech Journalism</h3>
-                <p class="text-gray-400">Curating and reporting on the latest breakthroughs, trends, and stories from the fast-paced world of technology.</p>
+                <div class="w-12 h-12 bg-gray-900/50 text-gray-400 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Real-Time Web</h3>
+                <p class="text-gray-400">Architecting high-performance, real-time applications using WebSockets and modern protocols for instantaneous communication and collaboration.</p>
             </div>
         </div>
     </section>
@@ -72,31 +78,45 @@
     <!-- News Section -->
     <section id="news" class="py-20">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold">Exciting Tech News</h2>
-            <p class="text-gray-400 mt-2">Our latest articles and findings.</p>
+            <h2 class="text-3xl md:text-4xl font-bold">Latest Insights</h2>
+            <p class="text-gray-400 mt-2">Our analysis of the tech landscape.</p>
         </div>
         <div class="space-y-8">
             <a href="#" class="block card-bg p-6 rounded-lg hover:bg-gray-800/70 transition-colors">
                 <div class="md:flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-indigo-400 font-medium">Artificial Intelligence</p>
-                        <h3 class="text-xl font-bold mt-1">The Rise of Generative AI in Creative Industries</h3>
-                        <p class="text-gray-400 mt-2 max-w-3xl">Exploring how new AI models are transforming art, music, and content creation, and what it means for creators.</p>
+                        <p class="text-sm text-amber-400 font-medium">Cognitive AI</p>
+                        <h3 class="text-xl font-bold mt-1">Beyond the Hype: Practical Applications of LLMs in 2025</h3>
+                        <p class="text-gray-400 mt-2 max-w-3xl">An analysis of real-world use cases where Large Language Models are creating tangible value, far from the spotlight.</p>
                     </div>
-                    <div class="mt-4 md:mt-0 text-gray-500 text-sm">August 12, 2025</div>
+                    <div class="mt-4 md:mt-0 text-gray-500 text-sm">October 03, 2025</div>
                 </div>
             </a>
             <a href="#" class="block card-bg p-6 rounded-lg hover:bg-gray-800/70 transition-colors">
                 <div class="md:flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-purple-400 font-medium">Web Development</p>
-                        <h3 class="text-xl font-bold mt-1">Edge Computing: The Next Frontier for Web Apps?</h3>
-                        <p class="text-gray-400 mt-2 max-w-3xl">A deep dive into how processing data closer to the user is leading to faster, more reliable web experiences.</p>
+                        <p class="text-sm text-violet-400 font-medium">Decentralized Systems</p>
+                        <h3 class="text-xl font-bold mt-1">The Interoperability Challenge: Bridging Blockchain Ecosystems</h3>
+                        <p class="text-gray-400 mt-2 max-w-3xl">A deep dive into the protocols and standards being developed to allow seamless communication between disparate blockchains.</p>
                     </div>
-                    <div class="mt-4 md:mt-0 text-gray-500 text-sm">August 10, 2025</div>
+                    <div class="mt-4 md:mt-0 text-gray-500 text-sm">October 01, 2025</div>
                 </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Join Us Section -->
+    <section id="join" class="py-20">
+        <div class="card-bg rounded-2xl p-10 md:p-16 text-center">
+             <h2 class="text-3xl md:text-4xl font-bold">Join the Collective.</h2>
+            <p class="max-w-2xl mx-auto text-lg text-gray-400 mt-4 mb-8">
+                Are you a builder, a thinker, or an innovator? Connect with us, share your ideas, and help shape the future of technology.
+            </p>
+            <a href="{% url 'account_signup' %}" class="bg-amber-500 hover:bg-amber-400 text-black font-semibold py-3 px-8 rounded-lg transition-transform transform hover:scale-105">
+                Become a Member
             </a>
         </div>
     </section>
 </main>
 {% endblock %}
+

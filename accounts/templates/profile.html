@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}{{ profile_user.username }}'s Profile{% endblock %}
 
@@ -10,7 +10,12 @@
         <div class="flex flex-col md:flex-row items-center text-center md:text-left md:space-x-8">
             <!-- Profile Picture -->
             <div class="flex-shrink-0 mb-6 md:mb-0">
-                <img src="{{ profile_user.profile.profile_picture.url }}" alt="{{ profile_user.username }}'s profile picture" class="w-40 h-40 rounded-full border-4 border-indigo-500 object-cover shadow-lg">
+                <!-- UPDATED: Logic for URLField and placeholder -->
+                {% if profile_user.profile.profile_picture %}
+                    <img src="{{ profile_user.profile.profile_picture }}" alt="{{ profile_user.username }}'s profile picture" class="w-40 h-40 rounded-full border-4 border-indigo-500 object-cover shadow-lg">
+                {% else %}
+                    <img src="https://placehold.co/160x160/171717/e5e5e5?text={{ profile_user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-40 h-40 rounded-full border-4 border-gray-700 object-cover shadow-lg">
+                {% endif %}
             </div>
 
             <!-- Profile Info -->
@@ -72,10 +77,15 @@
         <div class="mt-8 border-t border-white/10 pt-6">
             <h3 class="text-xl font-semibold text-white mb-4">Friends</h3>
             <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                {% for friend_profile in profile_user.profile.friends.all %}
-                    <a href="{% url 'profile' friend_profile.user.username %}" class="text-center group transition-transform transform hover:-translate-y-1">
-                        <img src="{{ friend_profile.profile_picture.url }}" alt="{{ friend_profile.user.username }}" class="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-gray-700 group-hover:border-indigo-500 transition-colors">
-                        <p class="font-medium text-gray-300 text-sm truncate group-hover:text-white">{{ friend_profile.user.username }}</p>
+                {% for friend in profile_user.profile.friends.all %}
+                    <a href="{% url 'profile' friend.user.username %}" class="text-center group transition-transform transform hover:-translate-y-1">
+                        <!-- UPDATED: Logic for URLField and placeholder -->
+                        {% if friend.profile_picture %}
+                            <img src="{{ friend.profile_picture }}" alt="{{ friend.user.username }}" class="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-gray-700 group-hover:border-indigo-500 transition-colors">
+                        {% else %}
+                            <img src="https://placehold.co/80x80/171717/e5e5e5?text={{ friend.user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-gray-700">
+                        {% endif %}
+                        <p class="font-medium text-gray-300 text-sm truncate group-hover:text-white">{{ friend.user.username }}</p>
                     </a>
                 {% empty %}
                     <p class="text-gray-400 col-span-full text-center py-4">No friends yet.</p>

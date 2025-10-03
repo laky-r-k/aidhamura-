@@ -50,26 +50,21 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">{{ profile_form.profile_picture.label }}</label>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Profile Picture</label>
                 <div class="flex items-center space-x-4">
+                    <!-- UPDATED: Logic for URLField and placeholder -->
                     {% if user.profile.profile_picture %}
-                        <img id="profile-pic-preview" src="{{ user.profile.profile_picture.url }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700">
+                        <img id="profile-pic-preview" src="{{ user.profile.profile_picture }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700">
                     {% else %}
-                        <img id="profile-pic-preview" src="https://placehold.co/64x64/171717/e5e5e5?text=?" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700">
+                        <img id="profile-pic-preview" src="https://placehold.co/64x64/171717/e5e5e5?text={{ user.username|slice:':1'|upper }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700">
                     {% endif %}
-                    <label for="{{ profile_form.profile_picture.id_for_label }}" class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    
+                    <label for="id_profile_picture" class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         <span>Change Picture</span>
-                        <input type="file" name="{{ profile_form.profile_picture.name }}" id="{{ profile_form.profile_picture.id_for_label }}" class="hidden" accept="image/*">
+                        <!-- The name of this input MUST match the name in the custom view logic -->
+                        <input type="file" name="profile_picture" id="id_profile_picture" class="hidden" accept="image/*">
                     </label>
 
-                    {% if user.profile.profile_picture %}
-                        <div id="remove-pic-container" class="flex items-center">
-                            <input type="checkbox" name="{{ profile_form.profile_picture.html_name }}-clear" id="profile_picture-clear" class="hidden">
-                            <label for="profile_picture-clear" id="remove-pic-btn" class="cursor-pointer bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                                Remove
-                            </label>
-                        </div>
-                    {% endif %}
                 </div>
                  {% if profile_form.profile_picture.errors %}
                     <div class="text-red-400 text-sm mt-2">{% for error in profile_form.profile_picture.errors %}<p>{{ error }}</p>{% endfor %}</div>
@@ -90,19 +85,8 @@
 </main>
 
 <script>
-    const removeBtn = document.getElementById('remove-pic-btn');
     const profilePicPreview = document.getElementById('profile-pic-preview');
-    const removeContainer = document.getElementById('remove-pic-container');
-    const clearCheckbox = document.getElementById('profile_picture-clear');
-    const fileInput = document.getElementById('{{ profile_form.profile_picture.id_for_label }}');
-
-    if (removeBtn && profilePicPreview && clearCheckbox) {
-        removeBtn.addEventListener('click', function() {
-            clearCheckbox.checked = true;
-            profilePicPreview.style.display = 'none';
-            if(removeContainer) removeContainer.style.display = 'none';
-        });
-    }
+    const fileInput = document.getElementById('id_profile_picture');
 
     if (fileInput && profilePicPreview) {
         fileInput.addEventListener('change', function(event) {
@@ -110,10 +94,8 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Update the image source to show the preview
                     profilePicPreview.src = e.target.result;
-                    profilePicPreview.style.display = 'block';
-                    if(clearCheckbox) clearCheckbox.checked = false;
-                    if(removeContainer) removeContainer.style.display = 'flex';
                 }
                 reader.readAsDataURL(file);
             }

@@ -12,7 +12,8 @@ class Profile(models.Model):
     
     # Custom fields you want to add to the user
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', default='default.jpg')
+    #profile_picture = models.ImageField(upload_to='profile_pics/', default='default.jpg')
+    profile_picture = models.URLField(max_length=500, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True)
     
     # This creates a many-to-many relationship for the friend list.

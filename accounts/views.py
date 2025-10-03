@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q 
+import cloudinary
+import cloudinary.uploader
 def login_view(request):
     # Handle GET request: Show the login page
     if request.method == 'GET':
@@ -103,34 +105,63 @@ def add_friend(request, username):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        # Instantiate both forms with the submitted data.
-        # user_form handles username, email, etc.
+        # Instantiate the form for User model fields (username, email, etc.)
         user_form = UserEditForm(request.POST, instance=request.user)
-        # profile_form handles bio, picture, etc.
-        # request.FILES is essential for the image upload to work.
-        profile_form = ProfileEditForm(request.POST, request.FILES, instance=request.user.profile)
+        
+        # Instantiate the form for Profile model fields (bio, location)
+        # We do NOT pass request.FILES here because we are handling the upload manually.
+        profile_form = ProfileEditForm(request.POST, instance=request.user.profile)
 
-        # The view now checks if both forms are valid before saving.
+        # Check if the data for both forms is valid
         if user_form.is_valid() and profile_form.is_valid():
+            # Save the user and profile form data (but not the image yet)
             user_form.save()
-            profile_form.save()
+            profile = profile_form.save(commit=False)
+
+            # --- CUSTOM CLOUDINARY UPLOAD LOGIC ---
+            # Check if a new image file was included in the form submission
+            if 'profile_picture' in request.FILES:
+                image_file = request.FILES['profile_picture']
+                
+                try:
+                    # Use the cloudinary.uploader to send the file directly to your account
+                    print("Uploading image to Cloudinary...")
+                    upload_result = cloudinary.uploader.upload(image_file)
+                    
+                    # The 'secure_url' is the permanent https:// address of the uploaded image
+                    image_url = upload_result.get('secure_url')
+                    
+                    # Save that URL string to the profile_picture field in our model
+                    profile.profile_picture = image_url
+                    print("Image uploaded successfully. URL:", image_url)
+                    
+                except Exception as e:
+                    # If the upload fails for any reason, show an error and stop.
+                    messages.error(request, f"Error uploading image: {e}")
+                    return redirect('edit_profile')
+            # --- END OF CUSTOM LOGIC ---
+
+            # Now, save the profile instance to the database with the new image URL (if any)
+            profile.save()
+            
             messages.success(request, 'Your profile has been updated successfully!')
-            # We redirect to the profile page using the potentially new username.
             return redirect('profile', username=request.user.username)
         else:
             messages.error(request, 'Please correct the errors below.')
+
     else:
-        # For a GET request, we create both forms pre-filled with the user's current data.
+        # For a GET request, create the forms pre-filled with the user's current data
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
 
-    # We pass both forms to the template so they can be displayed.
+    # Pass both forms to the template so they can be displayed
     context = {
         'user_form': user_form,
         'profile_form': profile_form
     }
-    # Ensure this renders the template that is designed to show both forms.
     return render(request, 'edit_profile.html', context)
+
+
 
 
 

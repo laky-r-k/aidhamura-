@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'cloudinary_storage',
+    #'cloudinary_storage',
     'cloudinary',
     'django.contrib.sites',
     'allauth',
@@ -126,8 +126,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # This is the new, simpler "master switch"
+"""
 if os.environ.get('CLOUDINARY_URL'):
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    DEFAULT_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
+    print("Using Cloudinary for media storage")
+    """
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -18,16 +18,26 @@
 
         {% if results %}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {% for user in results %}
-                    <a href="{% url 'profile' user.username %}" class="card-bg p-6 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center">
-                        <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-indigo-500">
-                        <h3 class="font-bold text-lg text-white">{{ user.username }}</h3>
-                        <p class="text-sm text-gray-400">{{ user.first_name }} {{ user.last_name }}</p>
+                {% for user_result in results %}
+                    <a href="{% url 'profile' user_result.username %}" class="card-bg p-6 rounded-xl text-center hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group">
+                        
+                        <!-- Corrected image logic with placeholder -->
+                        {% if user_result.profile.profile_picture %}
+                            <img src="{{ user_result.profile.profile_picture }}" alt="{{ user_result.username }}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-indigo-500/50 transition-colors group-hover:border-indigo-400">
+                        {% else %}
+                            <img src="https://placehold.co/96x96/171717/e5e5e5?text={{ user_result.username|slice:':1'|upper }}" alt="Default profile picture" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gray-700 transition-colors group-hover:border-indigo-400">
+                        {% endif %}
+                        
+                        <h3 class="font-bold text-lg text-white transition-colors group-hover:text-indigo-300">{{ user_result.username }}</h3>
+                        {% if user_result.first_name or user_result.last_name %}
+                            <p class="text-sm text-gray-400">{{ user_result.first_name }} {{ user_result.last_name }}</p>
+                        {% endif %}
                     </a>
                 {% endfor %}
             </div>
         {% elif query %}
-            <div class="card-bg p-8 rounded-xl text-center">
+            <div class="card-bg p-8 rounded-xl text-center flex flex-col items-center">
+                <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <h3 class="font-semibold text-xl text-white">No Users Found</h3>
                 <p class="text-gray-400 mt-2">We couldn't find any users matching your search. Please try a different name.</p>
             </div>
@@ -35,3 +45,4 @@
     </div>
 </main>
 {% endblock %}
+

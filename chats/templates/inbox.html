@@ -1,15 +1,30 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Inbox{% endblock %}
 
 {% block content %}
+<style>
+    /* Custom scrollbar for a more polished look in WebKit browsers */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #4f46e5; /* Indigo color */
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6366f1;
+    }
+</style>
+
 <main class="container mx-auto px-4 md:px-6 pt-24 h-screen">
     <div class="card-bg w-full h-[calc(100vh-7rem)] mx-auto rounded-2xl shadow-2xl flex overflow-hidden">
         
-        <!-- Left Panel: Conversation List -->
         <div class="w-full md:w-1/3 border-r border-white/10 flex flex-col">
-            <!-- Header -->
-            <div class="p-4 border-b border-white/10 flex justify-between items-center">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center flex-shrink-0">
                 <h2 class="text-xl font-bold gradient-text">Chats</h2>
                 <button id="new-chat-btn" title="New Chat" class="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -18,15 +33,25 @@
                 </button>
             </div>
 
-            <!-- Conversation List -->
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
                 {% for preview in chat_previews %}
-                    <a href="{% url 'chat' preview.user.username %}" class="block p-4 border-b border-white/10 hover:bg-gray-700/50 transition-colors">
+                    <a href="{% url 'chat' preview.user.username %}" class="block p-4 border-b border-white/10 transition-colors 
+                        {% if preview.user == other_user %}
+                            bg-indigo-900/50
+                        {% else %}
+                            hover:bg-gray-700/50
+                        {% endif %}
+                    ">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
-                                <img src="{{ preview.user.profile.profile_picture.url }}" alt="{{ preview.user.username }}" class="w-12 h-12 rounded-full object-cover">
+                                {% if preview.user.profile.profile_picture %}
+                                    <img src="{{ preview.user.profile.profile_picture }}" alt="{{ preview.user.username }}" class="w-12 h-12 rounded-full object-cover">
+                                {% else %}
+                                    <img src="https://placehold.co/48x48/171717/e5e5e5?text={{ preview.user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-12 h-12 rounded-full object-cover">
+                                {% endif %}
                                 <div>
                                     <p class="font-semibold text-white">{{ preview.user.username }}</p>
+                                    <p class="text-sm text-gray-400 truncate">{{ preview.last_message.content|default:"No messages yet"|truncatechars:25 }}</p>
                                 </div>
                             </div>
                             {% if preview.unread_count > 0 %}
@@ -37,57 +62,62 @@
                         </div>
                     </a>
                 {% empty %}
-                    <p class="text-center text-gray-400 p-8">No active conversations.</p>
+                    <div class="text-center text-gray-400 p-8 flex flex-col items-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                        <p>No active conversations.</p>
+                        <p class="text-sm text-gray-500">Click the edit icon to start a new chat.</p>
+                    </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Right Panel: Chat Window or Placeholder -->
         <div class="hidden md:flex w-2/3 flex-col">
             {% if other_user %}
-                <!-- Active Chat Window -->
-                <div class="p-4 border-b border-white/10 flex items-center space-x-4">
-                    <img src="{{ other_user.profile.profile_picture.url }}" alt="{{ other_user.username }}" class="w-12 h-12 rounded-full object-cover">
+                <div class="p-4 border-b border-white/10 flex items-center space-x-4 flex-shrink-0">
+                    {% if other_user.profile.profile_picture %}
+                        <img src="{{ other_user.profile.profile_picture }}" alt="{{ other_user.username }}" class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                        <img src="https://placehold.co/48x48/171717/e5e5e5?text={{ other_user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-12 h-12 rounded-full object-cover">
+                    {% endif %}
+
                     <div>
                         <a href="{% url 'profile' other_user.username %}" class="font-bold text-lg hover:underline">{{ other_user.username }}</a>
                     </div>
                 </div>
-                <div id="chat-log" class="flex-1 space-y-4 overflow-y-auto p-6">
+                <div id="chat-log" class="flex-1 space-y-4 overflow-y-auto p-6 custom-scrollbar">
                     {% for message in messages %}
                         {% if message.sender == request.user %}
-                            <div class="text-right">
-                                <div class="inline-block bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words text-left">{{ message.content }}</div>
+                            <div class="flex justify-end">
+                                <div class="bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">{{ message.content }}</div>
                             </div>
                         {% else %}
-                            <div class="text-left">
-                                <div class="inline-block bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">{{ message.content }}</div>
+                            <div class="flex justify-start">
+                                <div class="bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">{{ message.content }}</div>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
-                <form id="chat-form" class="p-4 border-t border-white/10 flex space-x-4">
+                <form id="chat-form" class="p-4 border-t border-white/10 flex space-x-4 flex-shrink-0">
                     <input id="chat-message-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-gray-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <button id="chat-message-submit" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg">Send</button>
+                    <button id="chat-message-submit" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Send</button>
                 </form>
 
             {% else %}
-                <!-- Placeholder when no chat is active -->
-                <div class="flex-1 flex items-center justify-center flex-col p-8">
+                <div class="flex-1 flex items-center justify-center flex-col p-8 text-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <h2 class="text-2xl font-bold text-gray-300">Welcome to AIDHAMURA Chat</h2>
-                    <p class="text-gray-500">Select a conversation to start messaging.</p>
+                    <h2 class="text-2xl font-bold text-gray-300">Welcome to Your Inbox</h2>
+                    <p class="text-gray-500 mt-2">Select a conversation from the left panel to start messaging.</p>
                 </div>
             {% endif %}
         </div>
     </div>
 </main>
 
-<!-- New Chat Modal -->
 <div id="new-chat-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="card-bg w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
-        <div class="p-4 border-b border-white/10 flex justify-between items-center">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center flex-shrink-0">
             <h3 class="text-lg font-bold">Start a New Chat</h3>
             <button id="close-modal-btn" class="p-2 rounded-full hover:bg-gray-700/50">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -95,23 +125,21 @@
                 </svg>
             </button>
         </div>
-        <div class="p-2 overflow-y-auto max-h-[60vh]">
+        <div class="p-2 overflow-y-auto max-h-[60vh] custom-scrollbar">
             {% for profile in all_users %}
-                <a href="{% url 'chat' profile.user.username %}" class="block p-3 rounded-lg hover:bg-gray-700/50">
-                    <div class="flex items-center space-x-4">
-                        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="w-10 h-10 rounded-full object-cover">
-                        <p class="font-semibold text-white">{{ profile.user.username }}</p>
-                    </div>
+                <a href="{% url 'chat' profile.user.username %}" class="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-700/50">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture }}" alt="{{ profile.user.username }}" class="w-10 h-10 rounded-full object-cover">
+                    {% else %}
+                         <img src="https://placehold.co/40x40/171717/e5e5e5?text={{ profile.user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-10 h-10 rounded-full object-cover">
+                    {% endif %}
+                    <p class="font-semibold text-white">{{ profile.user.username }}</p>
                 </a>
             {% endfor %}
         </div>
     </div>
 </div>
 
-
-<!-- =================== JAVASCRIPT SECTION =================== -->
-
-<!-- SCRIPT 1: Modal Logic (Always runs) -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const newChatBtn = document.getElementById('new-chat-btn');
@@ -131,7 +159,6 @@
 
             closeModalBtn.addEventListener('click', closeModal);
             
-            // Close modal if user clicks on the background overlay
             newChatModal.addEventListener('click', (event) => {
                 if (event.target === newChatModal) {
                     closeModal();
@@ -141,24 +168,18 @@
     });
 </script>
 
-<!-- SCRIPT 2: WebSocket Logic (Only runs if a chat is active) -->
 {% if other_user %}
-    <!-- These are used to pass Django variables to our script -->
     {{ other_user.username|json_script:"other-user-username" }}
     {{ request.user.username|json_script:"current-user-username" }}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get the usernames from the template
             const otherUserUsername = JSON.parse(document.getElementById('other-user-username').textContent);
             const currentUserUsername = JSON.parse(document.getElementById('current-user-username').textContent);
-            
-            // Get the HTML elements we need to interact with
             const chatLog = document.getElementById('chat-log');
             const chatInput = document.getElementById('chat-message-input');
             const chatForm = document.getElementById('chat-form');
 
-            // Scroll the chat log to the bottom on page load
             if (chatLog) {
                 chatLog.scrollTop = chatLog.scrollHeight;
             }
@@ -166,51 +187,45 @@
                 chatInput.focus();
             }
 
-            // --- WebSocket Connection ---
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const chatSocket = new WebSocket(
                 protocol + '//' + window.location.host + '/ws/chat/' + otherUserUsername + '/'
             );
 
-            // This function runs every time a new message is received from the server
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 const messageElement = document.createElement('div');
+                const messageContent = `<div class="inline-block rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
                 
-                // Check if the message was sent by the current user or the other user
                 if (data.username === currentUserUsername) {
-                    messageElement.className = 'text-right';
-                    messageElement.innerHTML = `<div class="inline-block bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words text-left">${data.message}</div>`;
+                    messageElement.className = 'flex justify-end';
+                    messageElement.innerHTML = `<div class="bg-indigo-600 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
                 } else {
-                    messageElement.className = 'text-left';
-                    messageElement.innerHTML = `<div class="inline-block bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
+                    messageElement.className = 'flex justify-start';
+                    messageElement.innerHTML = `<div class="bg-gray-700 text-white rounded-lg px-4 py-2 max-w-[75%] break-words">${data.message}</div>`;
                 }
                 
-                // Add the new message to the chat log and scroll down
                 if (chatLog) {
                     chatLog.appendChild(messageElement);
                     chatLog.scrollTop = chatLog.scrollHeight;
                 }
             };
 
-            // Handle socket closing
             chatSocket.onclose = function(e) {
                 console.error('Chat socket closed unexpectedly');
             };
 
-            // Handle form submission
             if (chatForm) {
                 chatForm.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Prevent the page from reloading
+                    e.preventDefault();
                     const message = chatInput.value;
-                    if (message.trim() === '') return; // Don't send empty messages
+                    if (message.trim() === '') return;
 
-                    // Send the message to the WebSocket server
                     chatSocket.send(JSON.stringify({
                         'message': message
                     }));
                     
-                    chatInput.value = ''; // Clear the input field
+                    chatInput.value = '';
                 });
             }
         });

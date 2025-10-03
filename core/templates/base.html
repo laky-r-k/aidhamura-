@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIDHAMURA - {% block title %}Pioneering Future Tech{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js for dropdown interactivity -->
+    <!-- Alpine.js for dropdown and mobile menu interactivity -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,8 +16,9 @@
             background-color: #0a0a0a;
             color: #e5e5e5;
         }
+        /* UPDATED: New Gradient */
         .gradient-text {
-            background: linear-gradient(90deg, #4f46e5, #c026d3);
+            background: linear-gradient(90deg, #8b5cf6, #facc15);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -27,6 +28,7 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        /* UPDATED: New Glow Color */
         .glow-effect {
             position: absolute;
             width: 500px;
@@ -34,7 +36,7 @@
             left: 50%;
             top: 0;
             transform: translateX(-50%);
-            background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, rgba(10, 10, 10, 0) 60%);
+            background: radial-gradient(circle, rgba(250, 204, 21, 0.15) 0%, rgba(10, 10, 10, 0) 60%);
             z-index: -1;
             pointer-events: none;
         }
@@ -44,72 +46,111 @@
 
     <div class="glow-effect"></div>
 
-    <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md">
+    <!-- Header with Alpine.js for mobile menu state -->
+    <header x-data="{ isMobileMenuOpen: false }" @keydown.escape.window="isMobileMenuOpen = false" class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <a href="{% url 'landing_page' %}" class="text-2xl font-bold tracking-tighter">
                     <span class="gradient-text">AIDHAMURA</span>
                 </a>
+
+                <!-- Desktop Navigation -->
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="{% url 'landing_page' %}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
                     <a href="{% url 'landing_page' %}#services" class="text-gray-300 hover:text-white transition-colors">Services</a>
                     <a href="{% url 'landing_page' %}#news" class="text-gray-300 hover:text-white transition-colors">News</a>
                     <a href="{% url 'inbox' %}" class="text-gray-300 hover:text-white transition-colors">Chat</a>
                     
-                    <!-- Global User Search Form -->
                     <form method="GET" action="{% url 'search_results' %}" class="relative">
-                        <input type="text" name="q" class="bg-gray-900/50 border border-white/10 rounded-full pl-10 pr-4 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Find users...">
+                        <input type="text" name="q" class="bg-gray-900/50 border border-white/10 rounded-full pl-10 pr-4 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Find users...">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                     </form>
 
-                    <!-- Authentication Section -->
                     <div class="flex items-center space-x-4">
                         {% if user.is_authenticated %}
                             <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" class="flex items-center space-x-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                                <button @click="open = !open" class="flex items-center space-x-2 text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none">
+                                    {% if user.profile.profile_picture %}
+                                        <img src="{{ user.profile.profile_picture }}" alt="Your profile picture" class="w-8 h-8 rounded-full object-cover border-2 border-gray-700">
+                                    {% else %}
+                                        <img src="https://placehold.co/32x32/171717/e5e5e5?text={{ user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-8 h-8 rounded-full object-cover border-2 border-gray-700">
+                                    {% endif %}
                                     <span>{{ user.username }}</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
                                 <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 card-bg rounded-lg shadow-lg py-1" style="display: none;">
                                     <a href="{% url 'profile' user.username %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">My Profile</a>
                                     <a href="{% url 'edit_profile' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Edit Profile</a>
-                                    
-                                    <!-- IMPROVED: Conditional Password Link -->
                                     {% if user.has_usable_password %}
                                         <a href="{% url 'account_change_password' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Change Password</a>
                                     {% else %}
                                         <a href="{% url 'account_set_password' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">Set Password</a>
                                     {% endif %}
-
                                     <div class="border-t border-white/10 my-1"></div>
                                     <a href="{% url 'account_logout' %}" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700/50">Logout</a>
                                 </div>
                             </div>
                         {% else %}
                             <a href="{% url 'account_login' %}" class="text-gray-300 hover:text-white transition-colors">Login</a>
-                            <a href="{% url 'account_signup' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            <a href="{% url 'account_signup' %}" class="bg-amber-500 hover:bg-amber-400 text-black font-semibold py-2 px-4 rounded-lg transition-colors">
                                 Sign Up
                             </a>
                         {% endif %}
                     </div>
                 </nav>
-                <button class="md:hidden text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+
+                <!-- Mobile Menu Button -->
+                <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="md:hidden text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div x-show="isMobileMenuOpen" @click.away="isMobileMenuOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="md:hidden card-bg border-t border-white/10" style="display: none;">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="{% url 'landing_page' %}#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50">About</a>
+                <a href="{% url 'landing_page' %}#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50">Services</a>
+                <a href="{% url 'landing_page' %}#news" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50">News</a>
+                <a href="{% url 'inbox' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700/50">Chat</a>
+            </div>
+            <div class="pt-3 pb-3 border-t border-gray-700">
+                 {% if user.is_authenticated %}
+                    <div class="px-5 flex items-center">
+                        {% if user.profile.profile_picture %}
+                            <img src="{{ user.profile.profile_picture }}" alt="Your profile picture" class="w-10 h-10 rounded-full object-cover">
+                        {% else %}
+                            <img src="https://placehold.co/40x40/171717/e5e5e5?text={{ user.username|slice:':1'|upper }}" alt="Default profile picture" class="w-10 h-10 rounded-full object-cover">
+                        {% endif %}
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-white">{{ user.username }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-2 space-y-1">
+                        <a href="{% url 'profile' user.username %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700/50">My Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700/50">Edit Profile</a>
+                        <a href="{% url 'account_logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700/50">Sign out</a>
+                    </div>
+                {% else %}
+                    <div class="px-5">
+                         <a href="{% url 'account_signup' %}" class="block w-full text-center bg-amber-500 hover:bg-amber-400 text-black font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Sign Up
+                        </a>
+                        <p class="mt-3 text-center text-sm text-gray-400">
+                            Already have an account? <a href="{% url 'account_login' %}" class="font-medium text-amber-400 hover:text-amber-300">Login</a>
+                        </p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </header>
 
-    <!-- Page specific content will be injected here -->
     <main>
         {% block content %}{% endblock %}
     </main>
     
-
-    <!-- Footer -->
     <footer class="border-t border-white/10 mt-20">
         <div class="container mx-auto px-6 py-8 text-center text-gray-400">
             <p>&copy; {% now "Y" %} AIDHAMURA. All Rights Reserved.</p>

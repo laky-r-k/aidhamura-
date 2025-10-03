@@ -26,5 +26,5 @@ urlpatterns = [
     path('profiles/',include('accounts.urls')),
     path('chat/',include('chats.urls')),
 ]
-if settings.DEBUG:
+if settings.DEBUG and False:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
