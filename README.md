@@ -1,131 +1,116 @@
-AIDHAMURA
-Architecting the Digital Frontier. A real-time chat application and tech collective platform built with Django Channels.
+🌐 AIDHAMURA
 
-AIDHAMURA is a full-featured web application designed as a hub for a modern tech collective. It features a robust, real-time chat system, comprehensive user authentication, and a scalable architecture ready for production deployment.
+Architecting the Digital Frontier.
+A real-time chat application and tech collective platform built with Django Channels.
 
-Live Site: https://aidhamura-app.onrender.com
+🔗 Live Site: https://aidhamura-app.onrender.com
 
-Key Features
-Real-Time Chat: Instant messaging between users, powered by Django Channels and WebSockets.
 
-Comprehensive Authentication: A complete user management system built with django-allauth, including:
+✨ Overview
 
-Username/Email & Password Registration
+AIDHAMURA is a full-featured web application designed as a hub for modern tech collectives.
+It combines real-time messaging, social connections, and scalable deployment to create a production-ready digital space.
 
-Secure "Sign in with Google" (OAuth 2.0)
+🔑 Key Features
 
-Mandatory Email Verification
+💬 Real-Time Chat — Instant messaging powered by Django Channels + WebSockets
 
-Password Reset ("Forgot Password") and Change flows
+🔐 Authentication & Security with django-allauth:
 
-User Profiles & Friends System: Customizable user profiles with profile pictures, bios, and a functional friends list.
+Username / Email login
 
-Global User Search: A navigation bar search to easily find and connect with other members.
+Secure Google OAuth 2.0 login
 
-Cloud Media Storage: All user-uploaded profile pictures are handled by Cloudinary, ensuring persistence and fast delivery via CDN.
+Mandatory email verification
 
-Production-Ready Deployment: Configured for a professional deployment pipeline on Render with PostgreSQL, Gunicorn, and Uvicorn.
+Password reset & change flows
 
-Tech Stack
+👤 User Profiles & Friends — Profile pictures, bios, and a working friends list
+
+🔎 Global Search — Quickly discover and connect with other users
+
+☁️ Cloud Media Storage — Profile pictures and uploads stored via Cloudinary CDN
+
+🚀 Production-Ready Deployment — Preconfigured for Render with PostgreSQL, Gunicorn & Uvicorn
+
+🛠️ Tech Stack
+
 Backend: Python, Django, Django Channels
-
-Frontend: HTML, Tailwind CSS, Alpine.js
-
-Database: PostgreSQL (Production), SQLite3 (Development)
-
+Frontend: HTML, TailwindCSS, Alpine.js
+Database: PostgreSQL (prod) | SQLite (dev)
 Real-Time Server: Daphne, Uvicorn
-
-Deployment: Render, Gunicorn
-
+Deployment: Render + Gunicorn
 Services:
 
-Cloudinary for media storage
+Cloudinary → Media Storage
 
-SendGrid for transactional emails
+SendGrid → Transactional Emails
 
-🚀 Getting Started (Local Development)
-Follow these instructions to set up the project on your local machine for development and testing.
+⚡ Getting Started (Local Development)
+1️⃣ Prerequisites
 
-1. Prerequisites
-Python 3.10 or higher
+Python 3.10+
 
 Git
 
-A code editor (like VS Code)
+A code editor (VS Code recommended)
 
-2. Clone the Repository
-git clone [https://github.com/laky-r-k/aidhamura-.git](https://github.com/laky-r-k/aidhamura-.git)
+2️⃣ Clone the Repository
+git clone https://github.com/laky-r-k/aidhamura-.git
 cd aidhamura-
 
-3. Set Up the Virtual Environment
-Create and activate a virtual environment to manage project dependencies.
-
-# Create the virtual environment
+3️⃣ Set Up Virtual Environment
 python3 -m venv venv
+source venv/bin/activate   # macOS/Linux
+# .\venv\Scripts\activate  # Windows
 
-# Activate it (macOS/Linux)
-source venv/bin/activate
-
-# Or on Windows
-# .\venv\Scripts\activate
-
-4. Install Dependencies
-Install all the required Python packages from the requirements.txt file.
-
+4️⃣ Install Dependencies
 pip install -r requirements.txt
 
-5. Configure Environment Variables
-The project uses a .env file to manage secret keys for local development.
+5️⃣ Configure Environment Variables
 
-Create a new file named .env in the root of the project.
-
-Copy the content from the example below and fill in your own secret values.
-
-.env file structure:
+Create a .env file in the project root:
 
 # --- SECURITY ---
-SECRET_KEY='generate_a_new_django_secret_key'
+SECRET_KEY=your_django_secret_key
 
 # --- EMAIL (SendGrid) ---
-SENDGRID_API_KEY='your_sendgrid_api_key_here'
-DEFAULT_FROM_EMAIL='your_verified_sendgrid_email@example.com'
+SENDGRID_API_KEY=your_sendgrid_api_key
+DEFAULT_FROM_EMAIL=your_verified_email@example.com
 
 # --- DATABASE ---
-# Keep this blank to use the local SQLite database
-DATABASE_URL=
+DATABASE_URL=   # Leave blank to use SQLite locally
 
 # --- DEBUG & HOSTS ---
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
 
-6. Run Database Migrations
-Create the local db.sqlite3 file and set up all the necessary database tables.
+# --- CLOUDINARY ---
+CLOUDINARY_URL=cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>
 
+6️⃣ Run Migrations
 python manage.py migrate
 
-7. Create a Local Superuser
-To access the Django admin panel, you need to create a local superuser.
-
+7️⃣ Create Superuser
 python manage.py createsuperuser
 
-Follow the prompts to set up your admin username and password.
-
-8. Run the Development Server
-You're all set! Start the local development server.
-
+8️⃣ Start Development Server
 python manage.py runserver
 
-The application will now be running at http://127.0.0.1:8000/.
 
-☁️ Deployment
-This project is configured for deployment on Render. The deployment is automated via the run.sh script. The following environment variables must be set on the Render dashboard for a successful deployment.
+App available at 👉 http://127.0.0.1:8000/
+
+☁️ Deployment on Render
+
+This project is fully configured for deployment on Render.
 
 Required Environment Variables
+
 SECRET_KEY
 
-DATABASE_URL (provided by Render when you connect the database)
+DATABASE_URL (auto-provided by Render DB)
 
-ALLOWED_HOSTS (your live URL, e.g., aidhamura-app.onrender.com)
+ALLOWED_HOSTS=aidhamura-app.onrender.com
 
 PYTHON_VERSION
 
@@ -135,17 +120,39 @@ DEFAULT_FROM_EMAIL
 
 CLOUDINARY_URL
 
-SITE_DOMAIN (for the Django Sites framework, e.g., aidhamura-app.onrender.com)
+SITE_DOMAIN=aidhamura-app.onrender.com
 
-Automatic Superuser & Site Creation
-This project uses Django data migrations to automatically set up the application on the first deployment. This is necessary for platforms like Render that do not have a persistent shell.
+Auto Superuser & Site Creation
 
-To use this feature, you must also set the following environment variables on Render:
+To simplify first-time setup, migrations auto-create:
 
-ADMIN_USER: The desired username for the admin account (e.g., admin).
+A superuser
 
-ADMIN_EMAIL: The email address for the admin account.
+The correct Django Sites domain
 
-ADMIN_PASS: The secure password for the admin account.
+Set these on Render before first deploy:
 
-On the first migrate command during deployment, the migrations will read these variables and create the superuser, as well as set up the correct domain for the Django Sites framework. On subsequent deployments, these migrations will see that the data already exists and will safely skip these steps.
+ADMIN_USER (e.g., admin)
+
+ADMIN_EMAIL
+
+ADMIN_PASS
+
+These run once on initial migration, and safely skip on future deployments.
+
+🤝 Contributing
+
+Contributions are welcome!
+
+Fork the repo
+
+Create a feature branch
+
+Open a pull request 🚀
+
+📜 License
+
+This project is licensed under the MIT License.
+
+⚡ AIDHAMURA: Building the future of collective digital communities.
+🔗 Live Site: https://aidhamura-app.onrender.com
